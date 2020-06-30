@@ -11,26 +11,21 @@ var connection = mysql.createConnection({
   password: "alpaca16",
   database: "alpacao",
 });
-
 connection.connect();
-
 app.listen(3000, function () {
   console.log("서버 실행");
 });
-
 app.use(bodyparser.json());
-
 app.get("/login", function (req, res) {
   res.sendfile(__dirname + "/login.html");
 });
-
 app.post("/login", function (req, res) {
   // console.log(req);
   var serial = req.body.search;
   console.log("serial: " + serial);
   var spdata = {};
   var query = connection.query(
-    'select * from cuser where serial="' + serial + '"',
+    'select * from cuser where serial="' + serial + '"', //sql insert
     function (err, rows) {
       try {
         if (err) throw err;
