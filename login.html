@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <input type="text" name="serial" class="se" value="0000" /> <br />
+    <button class="btn">로그인</button>
+
+    <script>
+      document.querySelector(".btn").addEventListener("click", function () {
+        var input = document.querySelector(".se").value;
+        console.log(document.querySelector(".se").value);
+        console.log(input);
+        ajax("http://127.0.0.1:3000/login", input);
+      });
+
+      function ajax(url, data) {
+        var data = { search: data };
+        data = JSON.stringify(data);
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", url);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.send(data);
+        xhr.addEventListener("load", function () {
+          var r = JSON.parse(xhr.responseText);
+          //var result = JSON.parse(xhr.responseText);
+          //   console.log(result);
+          if (r.result == "OK") console.log("로그인성공");
+          else console.log("로그인실패");
+        });
+      }
+    </script>
+  </body>
+</html>
