@@ -3,7 +3,10 @@ var app = express();
 var bodyparser = require("body-parser");
 var mysql = require("mysql");
 var iconv = require("iconv-lite");
+const session = require("express-session");
+const FileStore = require("session-file-store")(session);
 const { response } = require("express");
+const { turquoise } = require("color-name");
 var connection = mysql.createConnection({
   host: "183.111.199.157",
   port: 3306,
@@ -17,11 +20,12 @@ app.listen(3000, function () {
 });
 app.use(bodyparser.json());
 app.get("/login", function (req, res) {
-  res.sendfile(__dirname + "/login.html");
+  res.sendFile(__dirname + "/login.html");
 });
+
 app.post("/login", function (req, res) {
   // console.log(req);
-  var serial = req.body.search;
+  var serial = req.body.serial;
   console.log("serial: " + serial);
   var spdata = {};
   var query = connection.query(
@@ -30,12 +34,15 @@ app.post("/login", function (req, res) {
       try {
         if (err) throw err;
         if (rows[0]) {
-          console.log(query);
-          console.log(encodeURI(rows[0].serial));
-          console.log(encodeURI(rows[0].name));
           spdata.result = "OK";
           spdata.serial = encodeURI(rows[0].serial);
           spdata.name = encodeURI(rows[0].name);
+          console.log(req.session);
+          req.session.id = rows[0].serial;
+          req.session.login = true;
+          req.session.save(function () {
+            req.redirect("/");
+          });
         } else {
           console.log("No result");
           spdata.result = "NO";
