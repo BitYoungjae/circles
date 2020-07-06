@@ -1,9 +1,13 @@
-var express = require("express");
+var express = require("express"),
+  morgan = require("morgan"),
+  cookieParser = require("cookie-parser"),
+  session = require("express-session"),
+  bodyParser = require("body-parser");
 var app = express();
 var bodyparser = require("body-parser");
 var mysql = require("mysql");
 var iconv = require("iconv-lite");
-const session = require("express-session");
+var cookieParser = require("cookie-parser");
 const FileStore = require("session-file-store")(session);
 const { response } = require("express");
 const { turquoise } = require("color-name");
@@ -22,33 +26,41 @@ app.use(bodyparser.json());
 app.get("/login", function (req, res) {
   res.sendFile(__dirname + "/login.html");
 });
-
 app.post("/login", function (req, res) {
   // console.log(req);
-  var serial = req.body.serial;
-  console.log("serial: " + serial);
+  var id = req.body.id;
+  var pw = req.body.pw;
+  console.log("id: " + id + "pw:" + pw);
   var spdata = {};
   var query = connection.query(
-    'select * from cuser where serial="' + serial + '"', //sql insert
+    'select * from nodeuser where id="' + id + '" && pw="' + pw + '";', //sql insert
     function (err, rows) {
       try {
         if (err) throw err;
         if (rows[0]) {
           spdata.result = "OK";
-          spdata.serial = encodeURI(rows[0].serial);
-          spdata.name = encodeURI(rows[0].name);
-          console.log(req.session);
-          req.session.id = rows[0].serial;
-          req.session.login = true;
-          req.session.save(function () {
-            req.redirect("/");
-          });
+          spdata.id = encodeURI(rows[0].id);
+          spdata.pw = encodeURI(rows[0].pw);
+          spdata.nick = encodeURI(rows[0].nick);
+          console.log("seccess login for " + spdata.nick);
+          console.log("----------------------");
+          req.session.save(function () {});
         } else {
-          console.log("No result");
+          console.log("fail login");
+          console.log("--------------------------");
           spdata.result = "NO";
         }
       } catch {}
       res.json(spdata);
     }
   );
+});
+
+app.get("/sha", function (req, res) {
+  res.sendFile(__dirname + "/sha256.html");
+});
+app.post("/sha", function (req, res) {
+  var str = req.body.str;
+  console.log(str);
+  var spdata = {};
 });

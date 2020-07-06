@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <input type="text" class="sha" name="sha" /><br />
+    <button class="btn">click</button>
+    <script>
+      document.querySelector(".btn").addEventListener("click", function () {
+        var str = document.querySelector(".sha").value;
+
+        console.log(str);
+        ajax("http://alpacao.cafe24.com/util_war_exploded/?str=" + str);
+      });
+
+      function ajax(url) {
+        var data = {};
+        data = JSON.stringify(data);
+        console.log(data);
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", url);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.send(data);
+        xhr.addEventListener("load", function () {
+          var r = JSON.parse(xhr.responseText);
+        });
+      }
+    </script>
+  </body>
+</html>

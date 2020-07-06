@@ -6,28 +6,33 @@
     <title>LoginPage</title>
   </head>
   <body>
-    <input type="text" name="serial" class="se" value="0000" /> <br />
+    <input type="text" name="id" class="id" placeholder="insert id" /> <br />
+    <input type="text" name="pw" class="pw" placeholder="insert pw" /> <br />
+
     <button class="btn">로그인</button>
 
     <script>
       document.querySelector(".btn").addEventListener("click", function () {
-        var input = document.querySelector(".se").value;
-        ajax("http://127.0.0.1:3000/login", input);
+        var id = document.querySelector(".id").value;
+        var pw = document.querySelector(".pw").value;
+        console.log(id + pw);
+        ajax("http://127.0.0.1:3000/login", id, pw);
       });
 
-      function ajax(url, data) {
-        var data = { serial: data };
+      function ajax(url, id, pw) {
+        var data = { id: id, pw: pw };
         data = JSON.stringify(data);
+        console.log(data);
         var xhr = new XMLHttpRequest();
         xhr.open("POST", url);
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.send(data);
         xhr.addEventListener("load", function () {
           var r = JSON.parse(xhr.responseText);
-          //var result = JSON.parse(xhr.responseText);
-          //   console.log(result);
-          if (r.result == "OK") console.log("로그인성공");
-          else console.log("로그인실패");
+          if (r.result == "OK") {
+            console.log("로그인성공");
+            // location.href = "http://alpacao.cafe24.com/?id=" + r.serial;
+          } else console.log("로그인실패");
         });
       }
     </script>
