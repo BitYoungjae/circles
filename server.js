@@ -34,7 +34,7 @@ app.post("/login", function (req, res) {
   var id = req.body.id;
   var pw = req.body.pw;
   console.log("id: " + id + "pw:" + pw);
-  var spdata = {};
+  var spdata = {}; //
   var query = connection.query(
     'select * from nodeuser where id="' + id + '" && pw="' + pw + '";', //sql insert
     function (err, rows) {
