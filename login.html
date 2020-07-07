@@ -18,7 +18,6 @@
         console.log(id + pw);
         ajax("http://127.0.0.1:3000/login", id, pw);
       });
-
       function ajax(url, id, pw) {
         var data = { id: id, pw: pw };
         data = JSON.stringify(data);

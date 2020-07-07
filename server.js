@@ -6,6 +6,7 @@ var express = require("express"),
 var app = express();
 var bodyparser = require("body-parser");
 var mysql = require("mysql");
+const cors = require("cors");
 var iconv = require("iconv-lite");
 var cookieParser = require("cookie-parser");
 const FileStore = require("session-file-store")(session);
@@ -23,6 +24,8 @@ app.listen(3000, function () {
   console.log("서버 실행");
 });
 app.use(bodyparser.json());
+app.use(cors());
+app.set({ "access-control-allow-origin": "*" });
 app.get("/login", function (req, res) {
   res.sendFile(__dirname + "/login.html");
 });
