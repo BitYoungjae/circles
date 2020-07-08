@@ -50,7 +50,7 @@ app.post("/login", function (req, res) {
           req.session.save(function () {});
         } else {
           console.log("fail login");
-          console.log("--------------------------");
+          console.log("----------------------");
           spdata.result = "NO";
         }
       } catch {}
