@@ -58,7 +58,7 @@ app.post("/login", function (req, res) {
     }
   );
 });
-
+//a
 app.get("/sha", function (req, res) {
   res.sendFile(__dirname + "/sha256.html");
 });
