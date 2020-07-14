@@ -15,6 +15,16 @@ const FileStore = require("session-file-store")(session);
 const { response } = require("express");
 const { turquoise } = require("color-name");
 const { urlencoded } = require("body-parser");
+
+var mysqlstore = require("express-mysql-session")(session);
+var option = {
+  host: "183.111.199.157",
+  port: 3306,
+  user: "alpacao",
+  password: "alpaca16",
+  database: "alpacao",
+};
+
 var connection = mysql.createConnection({
   host: "183.111.199.157",
   port: 3306,
@@ -43,14 +53,28 @@ app.post("/login", function (req, res) {
     function (err, rows) {
       try {
         if (err) throw err;
+
+        // const body = req.body;
         if (rows[0]) {
+          app.use(
+            session({
+              key: "side", // 세션키
+              secret: "secret", // 비밀키
+              cookie: {
+                maxAge: 24000 * 60 * 60, // 쿠키 유효기간 24시간
+              },
+            })
+          );
+
           spdata.result = "OK";
           spdata.id = encodeURI(rows[0].id);
           spdata.pw = encodeURI(rows[0].pw);
           spdata.nick = encodeURI(rows[0].nick);
+          res.sendFile(__dirname + "/index.html");
           console.log("seccess login for " + spdata.nick);
           console.log("----------------------");
-          req.session.save(function () {});
+          req.session.id = body.user;
+          res.redirect("/");
         } else {
           console.log("fail login");
           console.log("----------------------");
@@ -69,6 +93,11 @@ app.get("/reg", function (req, res) {
 app.get("/sha", function (req, res) {
   res.sendFile(__dirname + "/sha256.html");
 });
+
+app.get("/index", function (req, res) {
+  res.send(req.session.user);
+});
+
 app.post("/sha", function (req, res) {
   var str = req.body.str;
   console.log(str);
