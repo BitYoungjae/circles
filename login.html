@@ -35,7 +35,7 @@
           var r = JSON.parse(xhr.responseText);
           if (r.result == "OK") {
             console.log("로그인성공");
-            // location.href = "http://alpacao.cafe24.com/?id=" + r.serial;
+            location.href = "/index?id=" + id;
           } else console.log("로그인실패");
         });
       }

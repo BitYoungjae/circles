@@ -43,38 +43,28 @@ app.get("/login", function (req, res) {
   res.sendFile(__dirname + "/login.html");
 });
 app.post("/login", function (req, res) {
-  // console.log(req);
   var id = req.body.id;
   var pw = req.body.pw;
   console.log("id: " + id + "pw:" + pw);
-  var spdata = {}; //
+  var spdata = {};
+
+  var result = {};
+
   var query = connection.query(
     'select * from nodeuser where id="' + id + '" && pw="' + pw + '";', //sql insert
     function (err, rows) {
       try {
         if (err) throw err;
 
-        // const body = req.body;
         if (rows[0]) {
-          app.use(
-            session({
-              key: "side", // 세션키
-              secret: "secret", // 비밀키
-              cookie: {
-                maxAge: 24000 * 60 * 60, // 쿠키 유효기간 24시간
-              },
-            })
-          );
-
           spdata.result = "OK";
           spdata.id = encodeURI(rows[0].id);
           spdata.pw = encodeURI(rows[0].pw);
           spdata.nick = encodeURI(rows[0].nick);
-          res.sendFile(__dirname + "/index.html");
+
           console.log("seccess login for " + spdata.nick);
           console.log("----------------------");
-          req.session.id = body.user;
-          res.redirect("/");
+          res.sendFile(__dirname + "/index.html");
         } else {
           console.log("fail login");
           console.log("----------------------");
@@ -95,7 +85,7 @@ app.get("/sha", function (req, res) {
 });
 
 app.get("/index", function (req, res) {
-  res.send(req.session.user);
+  res.sendFile(__dirname + "/index.html");
 });
 
 app.post("/sha", function (req, res) {
