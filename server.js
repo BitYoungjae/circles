@@ -50,7 +50,7 @@ app.use(
     saveUninitialized: true,
     store: sessionStore,
     cookie: {
-      maxAge: 1000 * 60 * 5,
+      maxAge: 60 * 5, //세션 유지시간
     },
   })
 );
@@ -77,7 +77,7 @@ app.post("/login", function (req, res) {
           req.session.uid = spdata.id;
           req.session.islogin = true;
           req.session.save(function () {
-            //  res.redirect("/index.html");
+            //req.redirect("/index");
           });
           // res.sendFile(__dirname + "/index.html");
         } else {
@@ -107,7 +107,13 @@ app.get("/sha", function (req, res) {
 });
 
 app.get("/index", function (req, res) {
-  res.sendFile(__dirname + "/index.html");
+  if (req.session.name) {
+    console.log(req.session.name);
+    res.sendFile(__dirname + "/index.html");
+  } else {
+    res.send("잘못된접근입니다.");
+    console.log(req.session.islogin);
+  }
 });
 
 app.post("/sha", function (req, res) {
