@@ -109,6 +109,7 @@ app.get("/sha", function (req, res) {
 app.get("/index", function (req, res) {
   if (req.session.name) {
     console.log(req.session.name);
+    res.write(req.session.name + "님 반갑습니다.");
     res.sendFile(__dirname + "/index.html");
   } else {
     res.send("잘못된접근입니다.");
