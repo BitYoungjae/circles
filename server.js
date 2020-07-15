@@ -16,15 +16,6 @@ const { response } = require("express");
 const { turquoise } = require("color-name");
 const { urlencoded } = require("body-parser");
 
-var mysqlstore = require("express-mysql-session")(session);
-var option = {
-  host: "183.111.199.157",
-  port: 3306,
-  user: "alpacao",
-  password: "alpaca16",
-  database: "alpacao",
-};
-
 var connection = mysql.createConnection({
   host: "183.111.199.157",
   port: 3306,
@@ -42,29 +33,53 @@ app.set({ "access-control-allow-origin": "*" });
 app.get("/login", function (req, res) {
   res.sendFile(__dirname + "/login.html");
 });
+
+var MySQLStore = require("express-mysql-session")(session);
+var option = {
+  host: "183.111.199.157",
+  port: 3306,
+  user: "alpacao",
+  password: "alpaca16",
+  database: "alpacao",
+};
+var sessionStore = new MySQLStore(option);
+app.use(
+  session({
+    secret: "asdfasffdas",
+    resave: false,
+    saveUninitialized: true,
+    store: sessionStore,
+    cookie: {
+      maxAge: 1000 * 60 * 5,
+    },
+  })
+);
 app.post("/login", function (req, res) {
+  //로그인시
   var id = req.body.id;
   var pw = req.body.pw;
   console.log("id: " + id + "pw:" + pw);
   var spdata = {};
-
-  var result = {};
-
   var query = connection.query(
     'select * from nodeuser where id="' + id + '" && pw="' + pw + '";', //sql insert
     function (err, rows) {
       try {
         if (err) throw err;
-
         if (rows[0]) {
           spdata.result = "OK";
           spdata.id = encodeURI(rows[0].id);
           spdata.pw = encodeURI(rows[0].pw);
           spdata.nick = encodeURI(rows[0].nick);
-
+          req.session.name = spdata.nick;
+          console.log(req.session.name);
           console.log("seccess login for " + spdata.nick);
           console.log("----------------------");
-          res.sendFile(__dirname + "/index.html");
+          req.session.uid = spdata.id;
+          req.session.islogin = true;
+          req.session.save(function () {
+            //  res.redirect("/index.html");
+          });
+          // res.sendFile(__dirname + "/index.html");
         } else {
           console.log("fail login");
           console.log("----------------------");
@@ -77,7 +92,14 @@ app.post("/login", function (req, res) {
 });
 
 app.get("/reg", function (req, res) {
+  //회원가입 path로 이동
   res.sendFile(__dirname + "/reg.html");
+});
+
+app.get("/logout", function (req, res) {
+  //로그아웃path
+  req.session.destroy(function (err) {}); //세션제거
+  res.sendFile(__dirname + "/login.html"); //로그인path로 이동
 });
 
 app.get("/sha", function (req, res) {
