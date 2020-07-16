@@ -28,6 +28,8 @@ app.listen(3000, function () {
   console.log("서버 실행");
 });
 app.use(bodyparser.json());
+app.set("view engine", "ejs");
+app.engine("html", require("ejs").renderFile);
 app.use(cors());
 app.set({ "access-control-allow-origin": "*" });
 app.get("/login", function (req, res) {
@@ -50,12 +52,13 @@ app.use(
     saveUninitialized: true,
     store: sessionStore,
     cookie: {
-      maxAge: 60 * 5, //세션 유지시간
+      // maxAge: new Date() + 60000, //세션 유지시간
     },
   })
 );
 app.post("/login", function (req, res) {
   //로그인시
+
   var id = req.body.id;
   var pw = req.body.pw;
   console.log("id: " + id + "pw:" + pw);
@@ -76,6 +79,8 @@ app.post("/login", function (req, res) {
           console.log("----------------------");
           req.session.uid = spdata.id;
           req.session.islogin = true;
+          req.session.ip = req.ip;
+
           req.session.save(function () {
             //req.redirect("/index");
           });
@@ -109,8 +114,10 @@ app.get("/sha", function (req, res) {
 app.get("/index", function (req, res) {
   if (req.session.name) {
     console.log(req.session.name);
-    res.write(req.session.name + "님 반갑습니다.");
+    console.log(req.session.ip);
+    //res.send(req.session.name);
     res.sendFile(__dirname + "/index.html");
+    // res.render("index.html", { name: req.session.name });
   } else {
     res.send("잘못된접근입니다.");
     console.log(req.session.islogin);
