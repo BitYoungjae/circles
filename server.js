@@ -15,7 +15,7 @@ const FileStore = require("session-file-store")(session);
 const { response } = require("express");
 const { turquoise } = require("color-name");
 const { urlencoded } = require("body-parser");
-
+var ejs = require("ejs");
 var connection = mysql.createConnection({
   host: "183.111.199.157",
   port: 3306,
@@ -28,6 +28,7 @@ app.listen(3000, function () {
   console.log("서버 실행");
 });
 app.use(bodyparser.json());
+app.use("/index", express.static(__dirname + "/script"));
 app.set("view engine", "ejs");
 app.engine("html", require("ejs").renderFile);
 app.use(cors());
@@ -81,8 +82,10 @@ app.post("/login", function (req, res) {
           req.session.islogin = true;
           req.session.ip = req.ip;
 
+          var obj = { nickname: spdata.nick, id: spdata.id };
+
           req.session.save(function () {
-            //req.redirect("/index");
+            //  req.redirect("/index");
           });
           // res.sendFile(__dirname + "/index.html");
         } else {
@@ -107,27 +110,17 @@ app.get("/logout", function (req, res) {
   res.sendFile(__dirname + "/login.html"); //로그인path로 이동
 });
 
-app.get("/sha", function (req, res) {
-  res.sendFile(__dirname + "/sha256.html");
-});
-
 app.get("/index", function (req, res) {
   if (req.session.name) {
-    console.log(req.session.name);
+    console.log("정상접근  " + req.session.name);
     console.log(req.session.ip);
-    //res.send(req.session.name);
-    res.sendFile(__dirname + "/index.html");
-    // res.render("index.html", { name: req.session.name });
+
+    res.sendFile(__dirname + "/canvas.html");
   } else {
     res.send("잘못된접근입니다.");
+    console.log("잘못된 접근 시도");
     console.log(req.session.islogin);
   }
-});
-
-app.post("/sha", function (req, res) {
-  var str = req.body.str;
-  console.log(str);
-  var spdata = {};
 });
 
 app.post("/regcheck", function (req, res) {

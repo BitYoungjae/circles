@@ -7,12 +7,16 @@
   </head>
   <body>
     Main <br />
-    <button class="btn">delete session</button>
+    <button class="btn">로그아웃</button>
+    <button class="api">api</button>
     <script>
       document.querySelector(".btn").addEventListener("click", function () {
         location.href = "/logout";
       });
-      console.log(sessionStorage);
+
+      document.querySelector(".api").addEventListener("click", function () {
+        location.href = "/api";
+      });
     </script>
   </body>
 </html>
